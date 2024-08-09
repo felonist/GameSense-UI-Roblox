@@ -95,6 +95,36 @@ local Passed, Statement = pcall(function()
 				Size = UDim2.new(0, 660, 0, 560)
 			})
 
+			-- Draggable functionality
+			local dragging = false
+			local dragInput, startPos, startPosOffset
+
+			local function updatePosition(input)
+				local delta = input.Position - startPos
+				ScreenGui_MainFrame.Position = UDim2.new(0.5, delta.X, 0.5, delta.Y)
+			end
+
+			ScreenGui_MainFrame.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					dragging = true
+					startPos = input.Position
+					startPosOffset = ScreenGui_MainFrame.Position
+					dragInput = input
+				end
+			end)
+
+			ScreenGui_MainFrame.InputChanged:Connect(function(input)
+				if input == dragInput and dragging then
+					updatePosition(input)
+				end
+			end)
+
+			ScreenGui_MainFrame.InputEnded:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					dragging = false
+				end
+			end)
+
 			local ScreenGui_MainFrame_InnerBorder = utility:RenderObject("Frame", {
 				BackgroundColor3 = Color3.fromRGB(40, 40, 40),
 				BackgroundTransparency = 0,
